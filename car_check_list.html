@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的i6检查</title>
+  <style>
+    /* CSS 变量定义 */
+    :root {
+      --primary-color: #2563eb;
+      --success-color: #10b981;
+      --background: #f9fafb;
+      --card-background: #ffffff;
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+      --border-color: #e5e7eb;
+      --danger-color: #ef4444;
+      
+      /* 间距 */
+      --spacing-xs: 0.25rem;
+      --spacing-sm: 0.5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2rem;
+      
+      /* 字体大小 - 移动优先 */
+      --font-size-sm: 0.875rem;
+      --font-size-base: 0.875rem; /* 14px 移动端最小 */
+      --font-size-lg: 1rem;
+      --font-size-xl: 1.125rem;
+      --font-size-2xl: 1.5rem;
+      
+      /* 触摸目标最小尺寸 */
+      --touch-target-min: 44px;
+      
+      /* 边框圆角 */
+      --border-radius-sm: 0.25rem;
+      --border-radius-md: 0.5rem;
+      --border-radius-lg: 0.75rem;
+    }
+    
+    /* 全局样式重置 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: var(--font-size-base);
+      line-height: 1.6;
+      color: var(--text-primary);
+      background-color: var(--background);
+      padding: var(--spacing-md);
+    }
+    
+    /* 主容器 */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    /* 头部样式 */
+    .header {
+      background-color: var(--card-background);
+      padding: var(--spacing-lg);
+      border-radius: var(--border-radius-lg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .header h1 {
+      font-size: var(--font-size-xl);
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-md);
+      text-align: center;
+    }
+    
+    /* 进度显示区域 */
+    .progress-section {
+      margin-top: var(--spacing-md);
+    }
+    
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-sm);
+      font-size: var(--font-size-base);
+      color: var(--text-secondary);
+    }
+    
+    .progress-percentage {
+      font-weight: 600;
+      color: var(--primary-color);
+      font-size: var(--font-size-lg);
+    }
+    
+    /* 进度条 */
+    .progress-bar-container {
+      width: 100%;
+      height: 12px;
+      background-color: var(--border-color);
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+    }
+    
+    .progress-bar-fill {
+      height: 100%;
+      background-color: var(--success-color);
+      transition: width 0.3s ease;
+      border-radius: var(--border-radius-lg);
+    }
+    
+    /* 检查清单主区域 */
+    .checklist-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+      min-height: 400px;
+      position: relative;
+    }
+    
+    /* 单项卡片视图 */
+    .single-item-card {
+      background-color: var(--card-background);
+      border-radius: var(--border-radius-lg);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: var(--spacing-xl);
+      display: none;
+      animation: fadeIn 0.3s ease-in;
+    }
+    
+    .single-item-card.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* 分类标签 */
+    .category-badge {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: white;
+      padding: var(--spacing-xs) var(--spacing-md);
+      border-radius: var(--border-radius-md);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    /* 检查项内容 */
+    .item-content {
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .item-text {
+      font-size: var(--font-size-xl);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-md);
+      line-height: 1.4;
+    }
+    
+    .item-hint {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: var(--spacing-lg);
+      padding: var(--spacing-md);
+      background-color: var(--background);
+      border-radius: var(--border-radius-md);
+      border-left: 3px solid var(--primary-color);
+    }
+    
+    /* 复选框区域 */
+    .checkbox-section {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding: var(--spacing-lg);
+      background-color: var(--background);
+      border-radius: var(--border-radius-md);
+      margin-bottom: var(--spacing-lg);
+      min-height: var(--touch-target-min);
+    }
+    
+    .checkbox-section input[type="checkbox"] {
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      accent-color: var(--success-color);
+      flex-shrink: 0;
+    }
+    
+    .checkbox-label {
+      font-size: var(--font-size-lg);
+      color: var(--text-primary);
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .checkbox-label.completed {
+      color: var(--success-color);
+      font-weight: 600;
+    }
+    
+    /* 备注输入框 */
+    .note-input {
+      width: 100%;
+      padding: var(--spacing-md);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      font-size: var(--font-size-base);
+      font-family: inherit;
+      background-color: var(--card-background);
+      color: var(--text-primary);
+      min-height: 80px;
+      resize: vertical;
+      transition: border-color 0.2s, background-color 0.2s;
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .note-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    
+    .note-input::placeholder {
+      color: var(--text-secondary);
+    }
+    
+    /* 导航按钮 */
+    .navigation-buttons {
+      display: flex;
+      gap: var(--spacing-md);
+      justify-content: space-between;
+    }
+    
+    .nav-btn {
+      flex: 1;
+      padding: var(--spacing-md) var(--spacing-lg);
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      border: none;
+      border-radius: var(--border-radius-md);
+      cursor: pointer;
+      min-height: var(--touch-target-min);
+      transition: all 0.2s;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-sm);
+    }
+    
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .nav-btn-prev {
+      background-color: var(--border-color);
+      color: var(--text-primary);
+    }
+    
+    .nav-btn-prev:hover:not(:disabled) {
+      background-color: #d1d5db;
+    }
+    
+    .nav-btn-next {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .nav-btn-next:hover:not(:disabled) {
+      background-color: #1d4ed8;
+    }
+    
+    .nav-btn:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+    
+    /* 进度指示器 */
+    .item-progress {
+      text-align: center;
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      margin-top: var(--spacing-md);
+    }
+    
+    /* 旧版样式保留（用于重置后的全列表视图） */
+    .category-card {
+      background-color: var(--card-background);
+      border-radius: var(--border-radius-lg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: none;
+    }
+    
+    .category-header {
+      padding: var(--spacing-lg);
+      background-color: var(--primary-color);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: var(--touch-target-min);
+    }
+    
+    .category-title {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+    }
+    
+    .category-progress {
+      font-size: var(--font-size-sm);
+      opacity: 0.9;
+    }
+    
+    .category-items {
+      padding: var(--spacing-md);
+    }
+    
+    /* 检查项 */
+    .check-item {
+      padding: var(--spacing-md);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .check-item:last-child {
+      border-bottom: none;
+    }
+    
+    .check-item-row {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    /* 复选框样式 */
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: var(--touch-target-min);
+      min-height: var(--touch-target-min);
+      flex-shrink: 0;
+    }
+    
+    input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      accent-color: var(--success-color);
+    }
+    
+    .check-item-label {
+      flex: 1;
+      font-size: var(--font-size-base);
+      color: var(--text-primary);
+      line-height: 1.5;
+      padding-top: 10px;
+    }
+    
+    .check-item-label.completed {
+      color: var(--text-secondary);
+      text-decoration: line-through;
+    }
+    
+    /* 底部操作区 */
+    .footer {
+      margin-top: var(--spacing-xl);
+      padding: var(--spacing-lg);
+      background-color: var(--card-background);
+      border-radius: var(--border-radius-lg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    
+    /* 按钮样式 */
+    .btn {
+      padding: var(--spacing-md) var(--spacing-xl);
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      border: none;
+      border-radius: var(--border-radius-md);
+      cursor: pointer;
+      min-height: var(--touch-target-min);
+      min-width: var(--touch-target-min);
+      transition: background-color 0.2s, transform 0.1s;
+      font-family: inherit;
+    }
+    
+    .btn:active {
+      transform: scale(0.98);
+    }
+    
+    .btn-danger {
+      background-color: var(--card-background);
+      color: var(--danger-color);
+      border: 2px solid var(--danger-color);
+    }
+    
+    .btn-danger:hover {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    /* 庆祝动画覆盖层 */
+    .celebration-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(16, 185, 129, 0.9));
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-md);
+      animation: fadeIn 0.5s ease-in;
+    }
+    
+    .celebration-overlay.active {
+      display: flex;
+    }
+    
+    .celebration-content {
+      text-align: center;
+      color: white;
+      max-width: 600px;
+      animation: scaleIn 0.6s ease-out;
+    }
+    
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    .celebration-icon {
+      font-size: 5rem;
+      margin-bottom: var(--spacing-lg);
+      animation: bounce 1s ease-in-out infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+    
+    .celebration-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-md);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .celebration-message {
+      font-size: 1.25rem;
+      margin-bottom: var(--spacing-xl);
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+    
+    .celebration-stats {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+      backdrop-filter: blur(10px);
+    }
+    
+    .celebration-stat {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: var(--spacing-sm) 0;
+    }
+    
+    .celebration-close-btn {
+      background-color: white;
+      color: var(--primary-color);
+      padding: var(--spacing-md) var(--spacing-xl);
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      border: none;
+      border-radius: var(--border-radius-md);
+      cursor: pointer;
+      min-height: var(--touch-target-min);
+      transition: all 0.2s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+    
+    .celebration-close-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* 烟花效果 */
+    .firework {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      animation: firework 1.5s ease-out forwards;
+    }
+    
+    @keyframes firework {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--tx), var(--ty)) scale(0);
+      }
+    }
+    
+    /* 确认对话框 */
+    .dialog-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-md);
+    }
+    
+    .dialog-overlay.active {
+      display: flex;
+    }
+    
+    .dialog {
+      background-color: var(--card-background);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-xl);
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .dialog-title {
+      font-size: var(--font-size-xl);
+      font-weight: 600;
+      margin-bottom: var(--spacing-md);
+      color: var(--text-primary);
+    }
+    
+    .dialog-message {
+      font-size: var(--font-size-base);
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-xl);
+      line-height: 1.6;
+    }
+    
+    .dialog-actions {
+      display: flex;
+      gap: var(--spacing-md);
+      justify-content: flex-end;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #1d4ed8;
+    }
+    
+    .btn-secondary {
+      background-color: var(--border-color);
+      color: var(--text-primary);
+    }
+    
+    .btn-secondary:hover {
+      background-color: #d1d5db;
+    }
+    
+    /* 响应式设计 - 平板和桌面 */
+    @media (min-width: 768px) {
+      :root {
+        --font-size-base: 1rem; /* 16px 桌面端 */
+        --font-size-lg: 1.125rem;
+        --font-size-xl: 1.25rem;
+        --font-size-2xl: 1.875rem;
+      }
+      
+      body {
+        padding: var(--spacing-xl);
+      }
+      
+      .header h1 {
+        font-size: var(--font-size-2xl);
+      }
+      
+      .category-title {
+        font-size: var(--font-size-xl);
+      }
+      
+      .check-item-label {
+        font-size: var(--font-size-lg);
+      }
+      
+      /* 桌面端可以使用更宽松的间距 */
+      .header {
+        padding: var(--spacing-xl);
+      }
+      
+      .category-header {
+        padding: var(--spacing-xl);
+      }
+      
+      .category-items {
+        padding: var(--spacing-lg);
+      }
+      
+      .check-item {
+        padding: var(--spacing-lg);
+      }
+    }
+    
+    /* 打印样式 */
+    @media print {
+      body {
+        background-color: white;
+      }
+      
+      .footer {
+        display: none;
+      }
+      
+      .category-card {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 头部和进度区域 -->
+    <header class="header">
+      <h1>我的i6检查</h1>
+      <div class="progress-section">
+        <div class="progress-text">
+          <span>检查进度</span>
+          <span class="progress-percentage" id="progressPercentage">0%</span>
+        </div>
+        <div class="progress-bar-container" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="检查清单完成进度">
+          <div class="progress-bar-fill" id="progressBarFill" style="width: 0%"></div>
+        </div>
+        <div class="progress-text" style="margin-top: 0.5rem;">
+          <span id="progressText">已完成 0 / 0 项</span>
+        </div>
+      </div>
+    </header>
+    
+    <!-- 检查清单主区域 -->
+    <main class="checklist-container" id="checklistContainer">
+      <!-- 检查清单将通过 JavaScript 动态生成 -->
+    </main>
+    
+    <!-- 底部操作区 -->
+    <footer class="footer">
+      <button class="btn btn-danger" id="resetButton" aria-label="重置所有检查项和备注">重置检查清单</button>
+    </footer>
+  </div>
+  
+  <!-- 确认对话框 -->
+  <div class="dialog-overlay" id="dialogOverlay" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+    <div class="dialog">
+      <h2 class="dialog-title" id="dialogTitle">确认操作</h2>
+      <p class="dialog-message" id="dialogMessage">确定要执行此操作吗？</p>
+      <div class="dialog-actions">
+        <button class="btn btn-secondary" id="dialogCancel">取消</button>
+        <button class="btn btn-primary" id="dialogConfirm">确认</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 庆祝动画覆盖层 -->
+  <div class="celebration-overlay" id="celebrationOverlay">
+    <div class="celebration-content">
+      <div class="celebration-icon">🎉</div>
+      <h2 class="celebration-title">恭喜提车！</h2>
+      <p class="celebration-message">
+        您已完成所有检查项目<br>
+        祝您用车愉快，一路平安！
+      </p>
+      <div class="celebration-stats" id="celebrationStats">
+        <div class="celebration-stat">✓ 已完成 <span id="completedCount">0</span> 项检查</div>
+        <div class="celebration-stat">📝 添加了 <span id="notesCount">0</span> 条备注</div>
+      </div>
+      <button class="celebration-close-btn" id="celebrationClose">太好了！</button>
+    </div>
+  </div>
+  
+  <script>
+    // ==================== 数据定义 ====================
+    
+    /**
+     * 检查清单数据结构
+     * 包含 6 个检查分类，每个分类包含多个检查项
+     */
+    const checklistData = {
+      categories: [
+         {
+          id: 'documents',
+          title: '证件检查',
+          items: [
+            { id: 'doc_1', text: '车辆合格证、车架号' },
+            { id: 'doc_2', text: 'PDI' },
+            { id: 'doc_3', text: '保养手册和使用说明书' },
+            { id: 'doc_4', text: '车辆铭牌信息' }
+          ]
+        },
+        {
+          id: 'exterior',
+          title: '外观检查',
+          items: [
+            { id: 'ext_1', text: '车身漆面' },
+            { id: 'ext_2', text: '车门' },
+            { id: 'ext_3', text: '前后保险杠' },
+            { id: 'ext_4', text: '外部灯光' },
+            { id: 'ext_5', text: '外后视镜检查' },
+            { id: 'ext_6', text: '轮胎' },
+            { id: 'ext_7', text: '轮毂' },
+            { id: 'ext_8', text: '全车玻璃' },
+            { id: 'ext_9', text: '前后雨刷' },
+            { id: 'ext_10', text: '前备箱' },
+            { id: 'ext_11', text: '后备箱' }
+          ]
+        },
+        {
+          id: 'interior',
+          title: '内饰检查',
+          items: [
+            { id: 'int_1', text: '座椅外观' },
+            { id: 'int_2', text: '方向盘、档把无磨损' },
+            { id: 'int_3', text: '仪表盘显示正常，无故障灯' },
+            { id: 'int_4', text: '车内屏幕' },
+            { id: 'int_5', text: '空调' },
+            { id: 'int_6', text: '冰箱' },
+            { id: 'int_7', text: '车窗' },
+            { id: 'int_8', text: '后排遮阳帘' },
+            { id: 'int_9', text: '无线充电' },
+            { id: 'int_10', text: '后排Type-C' },
+            { id: 'int_11', text: '前排座椅' },
+            { id: 'int_12', text: '后排座椅' },
+            { id: 'int_13', text: 'HUD' },
+            { id: 'int_14', text: '音响' },
+            { id: 'int_15', text: '天窗' },
+            { id: 'int_16', text: '车内灯光' }
+          ]
+        },
+        {
+          id: 'mechanical',
+          title: '机械检查',
+          items: [
+            { id: 'mech_1', text: '方向盘调节' }
+          ]
+        },
+        {
+          id: 'accessories',
+          title: '配件检查',
+          items: [
+            { id: 'acc_1', text: '拆轮胎工具' },
+            { id: 'acc_2', text: '三角警示牌' },
+            { id: 'acc_3', text: '随车工具包' },
+            { id: 'acc_4', text: '随车钥匙数量（至少2把）' },
+            { id: 'acc_5', text: '充电测试' }
+          ]
+        },
+        {
+          id: 'final',
+          title: '最终确认',
+          items: [
+            { id: 'fin_1', text: '确认无重大问题，可以提车' }
+          ]
+        }
+      ]
+    };
+    
+    // ==================== 本地存储管理器 ====================
+    
+    /**
+     * StorageManager 类
+     * 负责处理所有 localStorage 相关操作
+     * 包括检查项状态、备注的保存和读取
+     */
+    class StorageManager {
+      /**
+       * 构造函数
+       * @param {string} storageKey - localStorage 中使用的键名
+       */
+      constructor(storageKey = 'carChecklistState') {
+        this.storageKey = storageKey;
+        this.isAvailable = this.checkLocalStorageAvailability();
+        
+        // 如果 localStorage 不可用，显示警告
+        if (!this.isAvailable) {
+          console.warn('localStorage 不可用，数据将不会被保存');
+        }
+      }
+      
+      /**
+       * 检测 localStorage 是否可用
+       * @returns {boolean} 是否可用
+       */
+      checkLocalStorageAvailability() {
+        try {
+          const test = '__storage_test__';
+          localStorage.setItem(test, test);
+          localStorage.removeItem(test);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+      
+      /**
+       * 获取当前存储的所有数据
+       * @returns {Object} 包含 checks 和 notes 的对象
+       */
+      _getData() {
+        if (!this.isAvailable) {
+          return { checks: {}, notes: {} };
+        }
+        
+        try {
+          const data = localStorage.getItem(this.storageKey);
+          if (!data) {
+            return { checks: {}, notes: {} };
+          }
+          
+          const parsed = JSON.parse(data);
+          
+          // 验证数据结构
+          if (typeof parsed !== 'object' || parsed === null) {
+            console.warn('localStorage 数据格式无效，已重置');
+            this.resetAll();
+            return { checks: {}, notes: {} };
+          }
+          
+          // 确保 checks 和 notes 字段存在且为对象
+          const checks = (typeof parsed.checks === 'object' && parsed.checks !== null) ? parsed.checks : {};
+          const notes = (typeof parsed.notes === 'object' && parsed.notes !== null) ? parsed.notes : {};
+          
+          return { checks, notes };
+        } catch (e) {
+          if (e instanceof SyntaxError) {
+            console.error('localStorage 数据解析失败（JSON 格式错误）:', e);
+          } else if (e.name === 'SecurityError') {
+            console.error('无法访问 localStorage（安全限制）:', e);
+          } else {
+            console.error('读取 localStorage 数据失败:', e);
+          }
+          
+          // 数据损坏或无法访问，返回空状态
+          return { checks: {}, notes: {} };
+        }
+      }
+      
+      /**
+       * 保存数据到 localStorage
+       * @param {Object} data - 要保存的数据对象
+       */
+      _saveData(data) {
+        if (!this.isAvailable) {
+          return;
+        }
+        
+        try {
+          const dataToSave = {
+            checks: data.checks || {},
+            notes: data.notes || {},
+            lastUpdated: Date.now()
+          };
+          localStorage.setItem(this.storageKey, JSON.stringify(dataToSave));
+        } catch (e) {
+          if (e.name === 'QuotaExceededError') {
+            console.error('存储空间不足，请清理浏览器数据');
+            alert('存储空间不足，无法保存数据。请清理浏览器数据后重试。');
+          } else if (e.name === 'SecurityError') {
+            console.error('无法访问 localStorage，可能是隐私模式');
+            alert('无法保存数据，请检查浏览器设置（可能处于隐私模式）。');
+          } else {
+            console.error('保存数据失败:', e);
+          }
+        }
+      }
+      
+      /**
+       * 保存检查项的完成状态
+       * @param {string} itemId - 检查项 ID
+       * @param {boolean} isChecked - 是否已完成
+       */
+      saveCheckState(itemId, isChecked) {
+        const data = this._getData();
+        data.checks[itemId] = isChecked;
+        this._saveData(data);
+      }
+      
+      /**
+       * 获取检查项的完成状态
+       * @param {string} itemId - 检查项 ID
+       * @returns {boolean} 是否已完成
+       */
+      getCheckState(itemId) {
+        const data = this._getData();
+        return data.checks[itemId] === true;
+      }
+      
+      /**
+       * 保存检查项的备注
+       * @param {string} itemId - 检查项 ID
+       * @param {string} noteText - 备注内容
+       */
+      saveNote(itemId, noteText) {
+        const data = this._getData();
+        if (noteText && noteText.trim()) {
+          data.notes[itemId] = noteText.trim();
+        } else {
+          // 如果备注为空，删除该项
+          delete data.notes[itemId];
+        }
+        this._saveData(data);
+      }
+      
+      /**
+       * 获取检查项的备注
+       * @param {string} itemId - 检查项 ID
+       * @returns {string} 备注内容
+       */
+      getNote(itemId) {
+        const data = this._getData();
+        return data.notes[itemId] || '';
+      }
+      
+      /**
+       * 获取所有状态数据
+       * @returns {Object} 包含 checks 和 notes 的完整状态对象
+       */
+      getAllStates() {
+        return this._getData();
+      }
+      
+      /**
+       * 重置所有数据
+       * 清除所有检查项状态和备注
+       */
+      resetAll() {
+        if (!this.isAvailable) {
+          return;
+        }
+        
+        try {
+          localStorage.removeItem(this.storageKey);
+        } catch (e) {
+          console.error('清除数据失败:', e);
+        }
+      }
+      
+      /**
+       * 计算完成进度
+       * @param {number} totalItems - 总检查项数量
+       * @returns {Object} 包含 completed（已完成数）、total（总数）、percentage（百分比）
+       */
+      calculateProgress(totalItems) {
+        const data = this._getData();
+        const checks = data.checks;
+        
+        // 统计已完成的检查项数量
+        const completed = Object.values(checks).filter(checked => checked === true).length;
+        
+        // 计算百分比
+        const percentage = totalItems > 0 ? Math.round((completed / totalItems) * 100) : 0;
+        
+        return {
+          completed,
+          total: totalItems,
+          percentage
+        };
+      }
+    }
+    
+    // ==================== 应用主控制器 ====================
+    
+    /**
+     * ChecklistApp 类
+     * 应用的主控制器，负责渲染检查清单和处理用户交互
+     */
+    class ChecklistApp {
+      /**
+       * 构造函数
+       * 初始化存储管理器和 DOM 元素引用
+       */
+      constructor() {
+        this.storageManager = new StorageManager();
+        this.checklistData = checklistData;
+        
+        // DOM 元素引用
+        this.checklistContainer = document.getElementById('checklistContainer');
+        this.progressText = document.getElementById('progressText');
+        this.progressPercentage = document.getElementById('progressPercentage');
+        this.progressBarFill = document.getElementById('progressBarFill');
+        this.progressBar = document.querySelector('[role="progressbar"]');
+        
+        // 计算总检查项数量
+        this.totalItems = this.calculateTotalItems();
+        
+        // 当前显示的检查项索引
+        this.currentItemIndex = 0;
+        
+        // 扁平化的检查项列表（用于单项导航）
+        this.flattenedItems = this.flattenChecklistItems();
+      }
+      
+      /**
+       * 计算总检查项数量
+       * @returns {number} 总数量
+       */
+      calculateTotalItems() {
+        return this.checklistData.categories.reduce((total, category) => {
+          return total + category.items.length;
+        }, 0);
+      }
+      
+      /**
+       * 扁平化检查项列表
+       * 将所有分类的检查项合并为一个数组，便于单项导航
+       * @returns {Array} 扁平化的检查项数组
+       */
+      flattenChecklistItems() {
+        const flattened = [];
+        this.checklistData.categories.forEach(category => {
+          category.items.forEach(item => {
+            flattened.push({
+              ...item,
+              categoryId: category.id,
+              categoryTitle: category.title
+            });
+          });
+        });
+        return flattened;
+      }
+      
+      /**
+       * 初始化应用
+       * 渲染检查清单并更新进度
+       */
+      init() {
+        try {
+          // 检测 localStorage 是否可用
+          if (!this.storageManager.isAvailable) {
+            this.showWarning('⚠️ 浏览器存储不可用，数据将不会被保存。应用仍可正常使用，但刷新页面后数据会丢失。');
+          }
+          
+          // 检测并恢复损坏的数据
+          this.validateAndRecoverData();
+          
+          // 渲染检查清单
+          this.renderChecklist();
+          
+          // 设置事件监听器
+          this.setupEventListeners();
+          
+          // 更新进度显示
+          this.updateProgress();
+          
+          console.log('应用初始化完成');
+        } catch (e) {
+          console.error('应用初始化失败:', e);
+          this.showError('应用初始化失败，请刷新页面重试。错误信息: ' + e.message);
+          
+          // 即使初始化失败，也尝试渲染基本界面
+          try {
+            this.renderChecklist();
+            this.setupEventListeners();
+          } catch (fallbackError) {
+            console.error('备用初始化也失败:', fallbackError);
+          }
+        }
+      }
+      
+      /**
+       * 验证并恢复损坏的数据
+       * 检测 localStorage 中的数据是否有效，如果损坏则清除并重置
+       */
+      validateAndRecoverData() {
+        if (!this.storageManager.isAvailable) {
+          return;
+        }
+        
+        try {
+          const data = this.storageManager.getAllStates();
+          
+          // 验证数据结构的完整性
+          if (typeof data !== 'object' || data === null) {
+            throw new Error('数据结构无效');
+          }
+          
+          if (typeof data.checks !== 'object' || typeof data.notes !== 'object') {
+            throw new Error('数据字段缺失或类型错误');
+          }
+          
+          // 验证 checks 中的值都是布尔类型
+          for (const [key, value] of Object.entries(data.checks)) {
+            if (typeof value !== 'boolean') {
+              console.warn(`检查项 ${key} 的值类型无效，已忽略`);
+              delete data.checks[key];
+            }
+          }
+          
+          // 验证 notes 中的值都是字符串类型
+          for (const [key, value] of Object.entries(data.notes)) {
+            if (typeof value !== 'string') {
+              console.warn(`备注 ${key} 的值类型无效，已忽略`);
+              delete data.notes[key];
+            }
+          }
+          
+          console.log('数据验证通过');
+        } catch (e) {
+          console.error('检测到数据损坏:', e);
+          
+          // 数据损坏，清除并重置
+          this.storageManager.resetAll();
+          this.showWarning('⚠️ 检测到数据损坏，已自动重置。请重新开始检查。');
+        }
+      }
+      
+      /**
+       * 显示警告信息
+       * @param {string} message - 警告消息
+       */
+      showWarning(message) {
+        console.warn(message);
+        this.showNotification(message, 'warning');
+      }
+      
+      /**
+       * 显示错误信息
+       * @param {string} message - 错误消息
+       */
+      showError(message) {
+        console.error(message);
+        this.showNotification(message, 'error');
+      }
+      
+      /**
+       * 显示通知消息
+       * @param {string} message - 消息内容
+       * @param {string} type - 消息类型 ('warning' 或 'error')
+       */
+      showNotification(message, type = 'warning') {
+        // 检查是否已存在通知，避免重复显示
+        const existingNotification = document.querySelector('.notification-message');
+        if (existingNotification) {
+          existingNotification.remove();
+        }
+        
+        const notificationDiv = document.createElement('div');
+        notificationDiv.className = 'notification-message';
+        notificationDiv.setAttribute('role', 'alert');
+        notificationDiv.setAttribute('aria-live', 'polite');
+        
+        // 根据类型设置不同的样式
+        if (type === 'error') {
+          notificationDiv.style.cssText = 'background-color: #fee2e2; color: #991b1b; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; text-align: center; border-left: 4px solid #dc2626;';
+        } else {
+          notificationDiv.style.cssText = 'background-color: #fef3c7; color: #92400e; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; text-align: center; border-left: 4px solid #f59e0b;';
+        }
+        
+        notificationDiv.textContent = message;
+        
+        // 插入到检查清单容器之前
+        const container = this.checklistContainer.parentElement;
+        const header = container.querySelector('.header');
+        if (header && header.nextSibling) {
+          container.insertBefore(notificationDiv, header.nextSibling);
+        } else {
+          container.insertBefore(notificationDiv, this.checklistContainer);
+        }
+        
+        // 5秒后自动移除警告消息（错误消息不自动移除）
+        if (type === 'warning') {
+          setTimeout(() => {
+            if (notificationDiv.parentElement) {
+              notificationDiv.remove();
+            }
+          }, 5000);
+        }
+      }
+      
+      /**
+       * 渲染完整的检查清单
+       * 使用单项卡片视图
+       */
+      renderChecklist() {
+        // 清空容器
+        this.checklistContainer.innerHTML = '';
+        
+        // 渲染所有检查项为单独的卡片
+        this.flattenedItems.forEach((item, index) => {
+          const cardElement = this.renderSingleItemCard(item, index);
+          this.checklistContainer.appendChild(cardElement);
+        });
+        
+        // 智能定位：显示第一个未完成的项目，如果都完成了则显示最后一项
+        const nextIncompleteIndex = this.findNextIncompleteItem(0);
+        if (nextIncompleteIndex !== null) {
+          // 有未完成的项目，跳转到第一个未完成的
+          this.currentItemIndex = nextIncompleteIndex;
+        } else {
+          // 全部完成，跳转到最后一项
+          this.currentItemIndex = this.flattenedItems.length - 1;
+        }
+        this.showCurrentItem();
+      }
+      
+      /**
+       * 查找下一个未完成的检查项
+       * @param {number} startIndex - 开始查找的索引
+       * @returns {number|null} 未完成项的索引，如果都完成了返回 null
+       */
+      findNextIncompleteItem(startIndex) {
+        for (let i = startIndex; i < this.flattenedItems.length; i++) {
+          const item = this.flattenedItems[i];
+          if (!this.storageManager.getCheckState(item.id)) {
+            return i;
+          }
+        }
+        return null;
+      }
+      
+      /**
+       * 渲染单个检查项卡片
+       * @param {Object} item - 检查项对象（包含 categoryTitle）
+       * @param {number} index - 在扁平化列表中的索引
+       * @returns {HTMLElement} 卡片的 DOM 元素
+       */
+      renderSingleItemCard(item, index) {
+        const isChecked = this.storageManager.getCheckState(item.id);
+        const noteText = this.storageManager.getNote(item.id);
+        
+        const card = document.createElement('div');
+        card.className = 'single-item-card';
+        card.dataset.itemId = item.id;
+        card.dataset.itemIndex = index;
+        
+        // 生成提示文本
+        const hint = this.generateHintForItem(item);
+        
+        card.innerHTML = `
+          <div class="category-badge">${item.categoryTitle}</div>
+          <div class="item-content">
+            <div class="item-text">${item.text}</div>
+            ${hint ? `<div class="item-hint">${hint}</div>` : ''}
+          </div>
+          
+          <div class="checkbox-section">
+            <input type="checkbox" id="check_${item.id}" ${isChecked ? 'checked' : ''} 
+                   aria-label="${item.text}" data-item-id="${item.id}">
+            <label for="check_${item.id}" class="checkbox-label ${isChecked ? 'completed' : ''}">
+              ${isChecked ? '✓ 已完成' : '标记为完成'}
+            </label>
+          </div>
+          
+          <textarea class="note-input" placeholder="添加备注（可选）..." 
+                    data-item-id="${item.id}" 
+                    aria-label="${item.text} 的备注">${noteText}</textarea>
+          
+          <div class="navigation-buttons">
+            <button class="nav-btn nav-btn-prev" data-action="prev" ${index === 0 ? 'disabled' : ''}>
+              ← 上一项
+            </button>
+            <button class="nav-btn nav-btn-next" data-action="${index === this.flattenedItems.length - 1 ? 'complete' : 'next'}">
+              ${index === this.flattenedItems.length - 1 ? '🎉 完成检查' : '下一项 →'}
+            </button>
+          </div>
+          
+          <div class="item-progress">
+            第 ${index + 1} 项，共 ${this.flattenedItems.length} 项
+          </div>
+        `;
+        
+        return card;
+      }
+      
+      /**
+       * 为检查项生成提示文本
+       * @param {Object} item - 检查项对象
+       * @returns {string} 提示文本
+       */
+      generateHintForItem(item) {
+        const hints = {
+          // 证件检查
+          'doc_1': '核对车辆合格证原件信息完整清晰，检查车架号（VIN码）在前挡风玻璃左下角或B柱，确保与合格证一致',
+          'doc_2': '检查PDI（Pre-Delivery Inspection）交车前检测报告，确认所有检测项目合格，无遗留问题',
+          'doc_3': '确认保养手册和使用说明书齐全完整，了解保养周期和注意事项',
+          'doc_4': '核对车辆铭牌信息（通常在B柱或发动机舱），确认生产日期、车型、配置等信息与合格证一致',
+          
+          // 外观检查
+          'ext_1': '在自然光下仔细检查车身各个角度，特别注意光线反射处，查看是否有细微划痕、凹陷或色差',
+          'ext_2': '逐个开关所有车门（包括前后门），检查开关是否顺畅，密封条是否完整无破损，关门时声音是否清脆',
+          'ext_3': '检查前后保险杠是否有裂纹、变形、松动或划痕，确认安装牢固',
+          'ext_4': '打开所有灯光测试：远近光灯、雾灯、转向灯、刹车灯、日间行车灯，确认都能正常工作且亮度均匀',
+          'ext_5': '检查外后视镜镜面是否完好无划痕，测试电动调节、折叠功能，确认加热除雾功能正常',
+          'ext_6': '检查四个轮胎生产日期、胎纹磨损，表面无鼓包、裂纹、异物等',
+          'ext_7': '检查四个轮毂是否有划痕、变形、腐蚀或缺损，确认轮毂盖安装牢固',
+          'ext_8': '检查全车玻璃（前后挡风玻璃、侧窗）生产日期、是否有裂纹、划痕或气泡，确认玻璃标识完整',
+          'ext_9': '测试前后雨刷器各档位功能，检查雨刷条是否完好，刮水是否干净无异响',
+          'ext_10': '打开前备箱，检查内部是否整洁，储物空间是否完好，开关是否顺畅',
+          'ext_11': '打开后备箱，检查内部是否整洁，地板是否平整，开关、照明灯是否正常',
+          
+          // 内饰检查
+          'int_1': '仔细检查座椅面料是否有污渍、破损、线头、色差或褶皱，确认缝线整齐，材质均匀',
+          'int_2': '检查方向盘、档把表面是否光滑无磨损、无划痕（新车应该很新），握感是否舒适',
+          'int_3': '启动车辆，观察仪表盘显示是否正常，确认无故障灯亮起（除正常自检外），检查各项信息显示准确',
+          'int_4': '测试前排双联屏、后排娱乐屏、方向盘小屏、后排空调小屏的触摸响应、显示效果、功能切换是否正常',
+          'int_5': '打开空调，测试制冷和制热功能，检查各出风口风量是否均匀，温度调节是否灵敏',
+          'int_6': '测试冰箱制冷和制热功能，检查温度调节是否正常，制冷效果是否明显',
+          'int_7': '测试所有车窗（前后左右）的升降功能，包括一键升降、防夹功能是否正常',
+          'int_8': '测试后排遮阳帘手动升降功能，检查有无卡顿',
+          'int_9': '测试无线充电功能，放置手机检查是否能正常充电',
+          'int_10': '测试后排有线充电接口（Type-C），连接设备检查是否能正常充电和投屏',
+          'int_11': '测试前排座椅的前后、高低、靠背调节功能，以及通风、加热、按摩功能是否正常',
+          'int_12': '测试后排座椅的调节功能、皇后坐椅，以及通风、加热功能是否正常',
+          'int_13': '测试HUD（抬头显示）的开关、亮度、高度调节功能，检查显示内容是否清晰',
+          'int_14': '播放音乐测试音响系统，调节音量、音效，检查各个扬声器是否正常工作，音质是否清晰',
+          'int_15': '测试天窗遮阳帘开关，检查开关是否顺畅，玻璃是否完好',
+          'int_16': '测试车内各处灯光：阅读灯、氛围灯、后备箱灯等，检查亮度调节和开关是否正常',
+          
+          // 机械检查
+          'mech_1': '测试方向盘的上下、前后调节功能，检查调节是否顺畅，锁止是否牢固',
+          
+          // 配件检查
+          'acc_1': '确认拆轮胎工具（扳手、拖车钩等）齐全且完好',
+          'acc_2': '确认三角警示牌在车内，检查是否完好无损，能否正常展开',
+          'acc_3': '检查随车工具包是否齐全，包括说明书、保修卡、钥匙等物品',
+          'acc_4': '确认至少有2把卡片钥匙（含备用钥匙），测试所有钥匙的解锁、上锁、启动等功能是否正常',
+          'acc_5': '测试充电功能（新能源车），连接充电枪检查是否能正常充电，充电指示灯和车内显示是否正常',
+          
+          // 最终确认
+          'fin_1': '最后全面检查，确认所有检查项都没有重大问题，证件齐全，可以放心提车并办理后续手续'
+        };
+        
+        return hints[item.id] || '';
+      }
+      
+      /**
+       * 显示当前检查项
+       */
+      showCurrentItem() {
+        // 隐藏所有卡片
+        const allCards = this.checklistContainer.querySelectorAll('.single-item-card');
+        allCards.forEach(card => card.classList.remove('active'));
+        
+        // 显示当前卡片
+        const currentCard = this.checklistContainer.querySelector(`[data-item-index="${this.currentItemIndex}"]`);
+        if (currentCard) {
+          currentCard.classList.add('active');
+          
+          // 滚动到顶部
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+      
+      /**
+       * 导航到上一项
+       */
+      navigateToPrevious() {
+        if (this.currentItemIndex > 0) {
+          this.currentItemIndex--;
+          this.showCurrentItem();
+        }
+      }
+      
+      /**
+       * 导航到下一项
+       */
+      navigateToNext() {
+        if (this.currentItemIndex < this.flattenedItems.length - 1) {
+          this.currentItemIndex++;
+          this.showCurrentItem();
+        }
+      }
+      
+      /**
+       * 渲染单个分类
+       * @param {Object} category - 分类对象
+       * @returns {HTMLElement} 分类的 DOM 元素
+       */
+      renderCategory(category) {
+        // 创建分类卡片容器
+        const categoryCard = document.createElement('section');
+        categoryCard.className = 'category-card';
+        categoryCard.dataset.categoryId = category.id;
+        categoryCard.setAttribute('aria-labelledby', `category-title-${category.id}`);
+        
+        // 计算该分类的完成进度
+        const categoryProgress = this.calculateCategoryProgress(category);
+        
+        // 创建分类头部
+        const categoryHeader = document.createElement('header');
+        categoryHeader.className = 'category-header';
+        categoryHeader.innerHTML = `
+          <span class="category-title" id="category-title-${category.id}">${category.title}</span>
+          <span class="category-progress" aria-label="${category.title}完成进度">${categoryProgress.completed} / ${categoryProgress.total}</span>
+        `;
+        
+        // 创建检查项容器
+        const categoryItems = document.createElement('div');
+        categoryItems.className = 'category-items';
+        categoryItems.setAttribute('role', 'list');
+        
+        // 渲染该分类下的所有检查项
+        category.items.forEach(item => {
+          const itemElement = this.renderCheckItem(item, category.id);
+          categoryItems.appendChild(itemElement);
+        });
+        
+        // 组装分类卡片
+        categoryCard.appendChild(categoryHeader);
+        categoryCard.appendChild(categoryItems);
+        
+        return categoryCard;
+      }
+      
+      /**
+       * 计算单个分类的完成进度
+       * @param {Object} category - 分类对象
+       * @returns {Object} 包含 completed 和 total 的对象
+       */
+      calculateCategoryProgress(category) {
+        let completed = 0;
+        
+        category.items.forEach(item => {
+          if (this.storageManager.getCheckState(item.id)) {
+            completed++;
+          }
+        });
+        
+        return {
+          completed,
+          total: category.items.length
+        };
+      }
+      
+      /**
+       * 渲染单个检查项
+       * @param {Object} item - 检查项对象
+       * @param {string} categoryId - 所属分类的 ID
+       * @returns {HTMLElement} 检查项的 DOM 元素
+       */
+      renderCheckItem(item, categoryId) {
+        // 从 localStorage 获取该检查项的状态
+        const isChecked = this.storageManager.getCheckState(item.id);
+        const noteText = this.storageManager.getNote(item.id);
+        
+        // 创建检查项容器
+        const checkItem = document.createElement('div');
+        checkItem.className = 'check-item';
+        checkItem.dataset.itemId = item.id;
+        checkItem.dataset.categoryId = categoryId;
+        checkItem.setAttribute('role', 'listitem');
+        
+        // 创建检查项行（复选框 + 标签）
+        const checkItemRow = document.createElement('div');
+        checkItemRow.className = 'check-item-row';
+        
+        // 创建复选框包装器
+        const checkboxWrapper = document.createElement('div');
+        checkboxWrapper.className = 'checkbox-wrapper';
+        
+        // 创建复选框
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `check_${item.id}`;
+        checkbox.checked = isChecked;
+        checkbox.setAttribute('aria-label', item.text);
+        checkbox.setAttribute('aria-checked', isChecked ? 'true' : 'false');
+        checkbox.dataset.itemId = item.id;
+        
+        checkboxWrapper.appendChild(checkbox);
+        
+        // 创建标签
+        const label = document.createElement('label');
+        label.className = 'check-item-label';
+        label.htmlFor = `check_${item.id}`;
+        label.textContent = item.text;
+        
+        // 如果已完成，添加完成样式
+        if (isChecked) {
+          label.classList.add('completed');
+        }
+        
+        // 组装检查项行
+        checkItemRow.appendChild(checkboxWrapper);
+        checkItemRow.appendChild(label);
+        
+        // 创建备注输入框
+        const noteInput = document.createElement('textarea');
+        noteInput.className = 'note-input';
+        noteInput.placeholder = '添加备注...';
+        noteInput.value = noteText;
+        noteInput.rows = 2;
+        noteInput.dataset.itemId = item.id;
+        noteInput.setAttribute('aria-label', `${item.text} 的备注`);
+        
+        // 组装检查项
+        checkItem.appendChild(checkItemRow);
+        checkItem.appendChild(noteInput);
+        
+        return checkItem;
+      }
+      
+      /**
+       * 更新进度显示
+       * 计算并更新页面顶部的进度信息
+       */
+      updateProgress() {
+        const progress = this.storageManager.calculateProgress(this.totalItems);
+        
+        // 更新进度文本
+        this.progressText.textContent = `已完成 ${progress.completed} / ${progress.total} 项`;
+        
+        // 更新百分比
+        this.progressPercentage.textContent = `${progress.percentage}%`;
+        
+        // 更新进度条
+        this.progressBarFill.style.width = `${progress.percentage}%`;
+        
+        // 更新 ARIA 属性
+        this.progressBar.setAttribute('aria-valuenow', progress.percentage);
+      }
+      
+      /**
+       * 处理复选框状态变化
+       * @param {Event} event - change 事件对象
+       */
+      handleCheckboxChange(event) {
+        const checkbox = event.target;
+        const itemId = checkbox.dataset.itemId;
+        const isChecked = checkbox.checked;
+        
+        // 更新 aria-checked 属性
+        checkbox.setAttribute('aria-checked', isChecked ? 'true' : 'false');
+        
+        // 保存状态到 localStorage
+        this.storageManager.saveCheckState(itemId, isChecked);
+        
+        // 更新 UI 显示 - 在单项卡片视图中更新标签
+        const card = checkbox.closest('.single-item-card');
+        if (card) {
+          const label = card.querySelector('.checkbox-label');
+          if (label) {
+            if (isChecked) {
+              label.classList.add('completed');
+              label.textContent = '✓ 已完成';
+            } else {
+              label.classList.remove('completed');
+              label.textContent = '标记为完成';
+            }
+          }
+        } else {
+          // 旧版全列表视图的处理（保留兼容性）
+          const label = checkbox.closest('.check-item-row')?.querySelector('.check-item-label');
+          if (label) {
+            if (isChecked) {
+              label.classList.add('completed');
+            } else {
+              label.classList.remove('completed');
+            }
+          }
+          
+          // 更新分类进度显示
+          const checkItem = checkbox.closest('.check-item');
+          if (checkItem) {
+            const categoryId = checkItem.dataset.categoryId;
+            this.updateCategoryProgress(categoryId);
+          }
+        }
+        
+        // 触发整体进度更新
+        this.updateProgress();
+      }
+      
+      /**
+       * 更新单个分类的进度显示
+       * @param {string} categoryId - 分类 ID
+       */
+      updateCategoryProgress(categoryId) {
+        // 找到对应的分类卡片
+        const categoryCard = document.querySelector(`[data-category-id="${categoryId}"]`);
+        if (!categoryCard) return;
+        
+        // 找到该分类的数据
+        const category = this.checklistData.categories.find(cat => cat.id === categoryId);
+        if (!category) return;
+        
+        // 计算该分类的完成进度
+        const categoryProgress = this.calculateCategoryProgress(category);
+        
+        // 更新分类头部的进度显示
+        const progressSpan = categoryCard.querySelector('.category-progress');
+        if (progressSpan) {
+          progressSpan.textContent = `${categoryProgress.completed} / ${categoryProgress.total}`;
+        }
+      }
+      
+      /**
+       * 防抖函数
+       * 延迟执行函数，避免频繁调用
+       * @param {Function} func - 要执行的函数
+       * @param {number} wait - 延迟时间（毫秒）
+       * @returns {Function} 防抖后的函数
+       */
+      debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func.apply(this, args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+      
+      /**
+       * 处理备注输入
+       * @param {Event} event - input 事件对象
+       */
+      handleNoteInput(event) {
+        const textarea = event.target;
+        const itemId = textarea.dataset.itemId;
+        const noteText = textarea.value;
+        
+        // 保存备注到 localStorage
+        this.storageManager.saveNote(itemId, noteText);
+      }
+      
+      /**
+       * 处理重置操作
+       * 显示确认对话框，用户确认后清除所有数据并重新渲染
+       */
+      handleReset() {
+        this.showConfirmDialog(
+          '确定要重置检查清单吗？',
+          '此操作将清除所有已完成的检查项和备注内容，且无法恢复。',
+          () => {
+            // 用户确认重置
+            this.storageManager.resetAll();
+            
+            // 重新渲染检查清单
+            this.renderChecklist();
+            
+            // 更新进度显示
+            this.updateProgress();
+            
+            console.log('检查清单已重置');
+          }
+        );
+      }
+      
+      /**
+       * 显示确认对话框
+       * @param {string} title - 对话框标题
+       * @param {string} message - 对话框消息
+       * @param {Function} onConfirm - 用户确认时的回调函数
+       */
+      showConfirmDialog(title, message, onConfirm) {
+        const dialogOverlay = document.getElementById('dialogOverlay');
+        const dialogTitle = document.getElementById('dialogTitle');
+        const dialogMessage = document.getElementById('dialogMessage');
+        const dialogConfirm = document.getElementById('dialogConfirm');
+        const dialogCancel = document.getElementById('dialogCancel');
+        
+        // 设置对话框内容
+        dialogTitle.textContent = title;
+        dialogMessage.textContent = message;
+        
+        // 显示对话框
+        dialogOverlay.classList.add('active');
+        
+        // 确认按钮点击处理
+        const handleConfirm = () => {
+          // 执行确认回调
+          if (typeof onConfirm === 'function') {
+            onConfirm();
+          }
+          
+          // 关闭对话框
+          closeDialog();
+        };
+        
+        // 取消按钮点击处理
+        const handleCancel = () => {
+          // 关闭对话框，不执行任何操作
+          closeDialog();
+        };
+        
+        // 关闭对话框的函数
+        const closeDialog = () => {
+          dialogOverlay.classList.remove('active');
+          
+          // 移除事件监听器
+          dialogConfirm.removeEventListener('click', handleConfirm);
+          dialogCancel.removeEventListener('click', handleCancel);
+          dialogOverlay.removeEventListener('click', handleOverlayClick);
+          document.removeEventListener('keydown', handleEscKey);
+        };
+        
+        // 点击遮罩层关闭对话框
+        const handleOverlayClick = (event) => {
+          if (event.target === dialogOverlay) {
+            handleCancel();
+          }
+        };
+        
+        // 按 Esc 键关闭对话框
+        const handleEscKey = (event) => {
+          if (event.key === 'Escape') {
+            handleCancel();
+          }
+        };
+        
+        // 添加事件监听器
+        dialogConfirm.addEventListener('click', handleConfirm);
+        dialogCancel.addEventListener('click', handleCancel);
+        dialogOverlay.addEventListener('click', handleOverlayClick);
+        document.addEventListener('keydown', handleEscKey);
+        
+        // 聚焦到取消按钮（更安全的默认选项）
+        dialogCancel.focus();
+      }
+      
+      /**
+       * 显示庆祝动画
+       */
+      showCelebration() {
+        const celebrationOverlay = document.getElementById('celebrationOverlay');
+        const completedCountSpan = document.getElementById('completedCount');
+        const notesCountSpan = document.getElementById('notesCount');
+        
+        // 计算统计数据
+        const progress = this.storageManager.calculateProgress(this.totalItems);
+        const allStates = this.storageManager.getAllStates();
+        const notesCount = Object.keys(allStates.notes).length;
+        
+        // 更新统计数据
+        completedCountSpan.textContent = progress.completed;
+        notesCountSpan.textContent = notesCount;
+        
+        // 显示庆祝覆盖层
+        celebrationOverlay.classList.add('active');
+        
+        // 创建烟花效果
+        this.createFireworks();
+        
+        // 播放烟花动画（持续3秒）
+        const fireworkInterval = setInterval(() => {
+          this.createFireworks();
+        }, 300);
+        
+        // 3秒后停止烟花
+        setTimeout(() => {
+          clearInterval(fireworkInterval);
+        }, 3000);
+        
+        // 关闭按钮事件
+        const closeBtn = document.getElementById('celebrationClose');
+        const handleClose = () => {
+          celebrationOverlay.classList.remove('active');
+          closeBtn.removeEventListener('click', handleClose);
+          
+          // 清除所有烟花元素
+          const fireworks = celebrationOverlay.querySelectorAll('.firework');
+          fireworks.forEach(fw => fw.remove());
+        };
+        
+        closeBtn.addEventListener('click', handleClose);
+      }
+      
+      /**
+       * 创建烟花效果
+       */
+      createFireworks() {
+        const celebrationOverlay = document.getElementById('celebrationOverlay');
+        const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe', '#fd79a8', '#fdcb6e'];
+        
+        // 创建3-5个烟花爆炸点
+        const fireworkCount = Math.floor(Math.random() * 3) + 3;
+        
+        for (let i = 0; i < fireworkCount; i++) {
+          // 随机位置
+          const x = Math.random() * window.innerWidth;
+          const y = Math.random() * window.innerHeight * 0.6; // 上半部分
+          
+          // 每个爆炸点创建20-30个粒子
+          const particleCount = Math.floor(Math.random() * 11) + 20;
+          
+          for (let j = 0; j < particleCount; j++) {
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            
+            // 随机颜色
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            firework.style.backgroundColor = color;
+            firework.style.boxShadow = `0 0 10px ${color}`;
+            
+            // 设置初始位置
+            firework.style.left = x + 'px';
+            firework.style.top = y + 'px';
+            
+            // 随机方向和距离
+            const angle = (Math.PI * 2 * j) / particleCount;
+            const velocity = Math.random() * 100 + 50;
+            const tx = Math.cos(angle) * velocity;
+            const ty = Math.sin(angle) * velocity;
+            
+            firework.style.setProperty('--tx', tx + 'px');
+            firework.style.setProperty('--ty', ty + 'px');
+            
+            celebrationOverlay.appendChild(firework);
+            
+            // 动画结束后移除元素
+            setTimeout(() => {
+              firework.remove();
+            }, 1500);
+          }
+        }
+      }
+      
+      /**
+       * 设置事件监听器
+       * 使用事件委托在容器上监听所有复选框的变化和备注输入
+       */
+      setupEventListeners() {
+        // 使用事件委托监听复选框 change 事件
+        this.checklistContainer.addEventListener('change', (event) => {
+          if (event.target.matches('input[type="checkbox"]')) {
+            this.handleCheckboxChange(event);
+          }
+        });
+        
+        // 使用事件委托监听复选框键盘事件（Space/Enter）
+        this.checklistContainer.addEventListener('keydown', (event) => {
+          if (event.target.matches('input[type="checkbox"]')) {
+            // Space 键和 Enter 键都可以切换复选框
+            if (event.key === ' ' || event.key === 'Enter') {
+              // 对于复选框，Space 键是默认行为，但我们确保 Enter 键也能工作
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                event.target.checked = !event.target.checked;
+                // 触发 change 事件
+                event.target.dispatchEvent(new Event('change', { bubbles: true }));
+              }
+            }
+          }
+        });
+        
+        // 使用事件委托监听备注输入框 input 事件
+        // 使用防抖延迟 500ms 保存，避免频繁写入 localStorage
+        const debouncedNoteInput = this.debounce((event) => {
+          this.handleNoteInput(event);
+        }, 500);
+        
+        this.checklistContainer.addEventListener('input', (event) => {
+          if (event.target.matches('.note-input')) {
+            debouncedNoteInput(event);
+          }
+        });
+        
+        // 使用事件委托监听导航按钮点击事件
+        this.checklistContainer.addEventListener('click', (event) => {
+          const button = event.target.closest('.nav-btn');
+          if (button && !button.disabled) {
+            const action = button.dataset.action;
+            if (action === 'prev') {
+              this.navigateToPrevious();
+            } else if (action === 'next') {
+              this.navigateToNext();
+            } else if (action === 'complete') {
+              this.showCelebration();
+            }
+          }
+        });
+        
+        // 监听键盘导航（左右箭头键）
+        document.addEventListener('keydown', (event) => {
+          // 如果焦点在输入框中，不处理箭头键
+          if (event.target.matches('input, textarea')) {
+            return;
+          }
+          
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            this.navigateToPrevious();
+          } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            this.navigateToNext();
+          }
+        });
+        
+        // 监听重置按钮点击事件
+        const resetButton = document.getElementById('resetButton');
+        if (resetButton) {
+          resetButton.addEventListener('click', () => {
+            this.handleReset();
+          });
+        }
+      }
+    }
+    
+    // ==================== 应用初始化 ====================
+    
+    /**
+     * 应用启动函数
+     * 在 DOM 加载完成后初始化应用，包含完整的错误处理
+     */
+    function startApp() {
+      try {
+        // 创建应用实例
+        const app = new ChecklistApp();
+        
+        // 初始化应用
+        app.init();
+        
+        // 将应用实例挂载到 window 对象，便于调试
+        window.checklistApp = app;
+        
+        console.log('新车购买检查清单应用已启动');
+      } catch (e) {
+        console.error('应用启动失败:', e);
+        
+        // 显示友好的错误消息
+        const container = document.querySelector('.container');
+        if (container) {
+          const errorDiv = document.createElement('div');
+          errorDiv.style.cssText = 'background-color: #fee2e2; color: #991b1b; padding: 2rem; margin: 2rem 0; border-radius: 0.5rem; text-align: center; border: 2px solid #dc2626;';
+          errorDiv.innerHTML = `
+            <h2 style="margin-bottom: 1rem;">应用启动失败</h2>
+            <p style="margin-bottom: 1rem;">抱歉，应用无法正常启动。请尝试以下操作：</p>
+            <ul style="text-align: left; max-width: 400px; margin: 0 auto;">
+              <li>刷新页面重试</li>
+              <li>清除浏览器缓存和数据</li>
+              <li>使用其他浏览器访问</li>
+              <li>检查浏览器是否启用了 JavaScript</li>
+            </ul>
+            <p style="margin-top: 1rem; font-size: 0.875rem; opacity: 0.8;">错误详情: ${e.message}</p>
+          `;
+          
+          const main = container.querySelector('main');
+          if (main) {
+            container.insertBefore(errorDiv, main);
+          } else {
+            container.appendChild(errorDiv);
+          }
+        }
+      }
+    }
+    
+    // 等待 DOM 加载完成后初始化应用
+    if (document.readyState === 'loading') {
+      // DOM 还在加载中
+      document.addEventListener('DOMContentLoaded', startApp);
+    } else {
+      // DOM 已经加载完成（脚本延迟执行的情况）
+      startApp();
+    }
+  </script>
+</body>
+</html>
