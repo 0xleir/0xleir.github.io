@@ -61,28 +61,29 @@ ignore: null
 theme: fluid
 deploy:
   type: ''
-navbar:
-  blog_title: 0xleir
-  menu:
-    - key: home
-      link: /en/
-      icon: iconfont icon-home-fill
-    - key: archive
-      link: /en/archives/
-      icon: iconfont icon-archive-fill
-    - key: category
-      link: /en/categories/
-      icon: iconfont icon-category-fill
-    - key: tag
-      link: /en/tags/
-      icon: iconfont icon-tags-fill
-    - key: about
-      link: /en/about/
-      icon: iconfont icon-user-fill
-    - key: 中文
-      name: 中文
-      link: /
-      icon: iconfont icon-translate
-index:
-  slogan:
-    text: ''
+theme_config:
+  navbar:
+    blog_title: 0xleir
+    menu:
+      - key: home
+        link: /en/
+        icon: iconfont icon-home-fill
+      - key: archive
+        link: /en/archives/
+        icon: iconfont icon-archive-fill
+      - key: category
+        link: /en/categories/
+        icon: iconfont icon-category-fill
+      - key: tag
+        link: /en/tags/
+        icon: iconfont icon-tags-fill
+      - key: about
+        link: /en/about/
+        icon: iconfont icon-user-fill
+      - key: 中文
+        name: 中文
+        link: /
+        icon: iconfont icon-translate
+  index:
+    slogan:
+      text: ''
