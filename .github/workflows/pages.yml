@@ -14,7 +14,10 @@ jobs:
         with:
           node-version: '20'
       - run: npm install
-      - run: npx hexo generate
+      - name: Build Chinese site
+        run: npx hexo generate
+      - name: Build English site
+        run: npx hexo generate --config _config.yml,_config.en.yml,_config.fluid.en.yml
       - uses: actions/upload-pages-artifact@v3
         with:
           path: public

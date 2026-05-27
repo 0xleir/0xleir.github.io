@@ -1,0 +1,4 @@
+# English site overrides
+language: en
+source_dir: source_en
+public_dir: public/en
