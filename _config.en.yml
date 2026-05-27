@@ -2,17 +2,19 @@
 language: en
 source_dir: source_en
 public_dir: public/en
+url: https://0xleir.github.io/en
+root: /en/
 
 theme_config:
   navbar:
     blog_title: "0xleir"
     menu:
-      - { key: "home", link: "/en/", icon: "iconfont icon-home-fill" }
-      - { key: "archive", link: "/en/archives/", icon: "iconfont icon-archive-fill" }
-      - { key: "category", link: "/en/categories/", icon: "iconfont icon-category-fill" }
-      - { key: "tag", link: "/en/tags/", icon: "iconfont icon-tags-fill" }
-      - { key: "about", link: "/en/about/", icon: "iconfont icon-user-fill" }
-      - { key: "中文", name: "中文", link: "/", icon: "iconfont icon-translate" }
+      - { key: "home", link: "/", icon: "iconfont icon-home-fill" }
+      - { key: "archive", link: "/archives/", icon: "iconfont icon-archive-fill" }
+      - { key: "category", link: "/categories/", icon: "iconfont icon-category-fill" }
+      - { key: "tag", link: "/tags/", icon: "iconfont icon-tags-fill" }
+      - { key: "about", link: "/about/", icon: "iconfont icon-user-fill" }
+      - { key: "中文", name: "中文", link: "https://0xleir.github.io/", icon: "iconfont icon-translate" }
   index:
     slogan:
       text: ""

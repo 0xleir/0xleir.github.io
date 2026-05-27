@@ -5,7 +5,7 @@ keywords: null
 author: 0xleir
 language: en
 timezone: Asia/Shanghai
-url: https://0xleir.github.io
+url: https://0xleir.github.io/en
 permalink: ':year/:month/:day/:title/'
 permalink_defaults: null
 pretty_urls:
@@ -61,28 +61,29 @@ ignore: null
 theme: fluid
 deploy:
   type: ''
+root: /en/
 theme_config:
   navbar:
     blog_title: 0xleir
     menu:
       - key: home
-        link: /en/
+        link: /
         icon: iconfont icon-home-fill
       - key: archive
-        link: /en/archives/
+        link: /archives/
         icon: iconfont icon-archive-fill
       - key: category
-        link: /en/categories/
+        link: /categories/
         icon: iconfont icon-category-fill
       - key: tag
-        link: /en/tags/
+        link: /tags/
         icon: iconfont icon-tags-fill
       - key: about
-        link: /en/about/
+        link: /about/
         icon: iconfont icon-user-fill
       - key: 中文
         name: 中文
-        link: /
+        link: https://0xleir.github.io/
         icon: iconfont icon-translate
   index:
     slogan:
